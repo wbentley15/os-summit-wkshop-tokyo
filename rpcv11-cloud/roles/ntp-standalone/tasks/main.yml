@@ -1,0 +1,13 @@
+---
+- name: Install NTP
+  apt: name={{item}} state=present
+  with_items:
+   - ntp
+   - ntpdate
+
+- name: Copying ntp.conf configuration file
+  template: src=cust_ntp.conf dest=/etc/ntp.conf mode=0755
+
+- name: Enable NTP to be started at boot
+  service: name=ntp enabled=yes state=started
+  notify: restart ntp

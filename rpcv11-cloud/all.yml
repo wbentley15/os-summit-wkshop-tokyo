@@ -1,0 +1,4 @@
+---
+
+- include: base.yml
+- include: network_update.yml

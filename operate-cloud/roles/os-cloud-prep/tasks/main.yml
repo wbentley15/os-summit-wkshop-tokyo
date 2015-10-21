@@ -1,0 +1,12 @@
+---
+
+- name: Copy public key to utility container
+  copy: src=id_rsa.pub dest=/opt mode=0644
+  
+- name: Create mrkt-dev01 user keypair
+  command: nova {{ MK_AUTH_S }} --os-auth-url {{ OS_AUTH_URL_V2 }}  
+           keypair-add --pub-key /opt/id_rsa.pub {{ KEY_NAME }}
+
+- name: Import Cirros OS image 
+  command: openstack {{ AUTH_S }} --os-auth-url {{ OS_AUTH_URL_V3 }} --os-identity-api-version 3  
+           image create --public --container-format bare --disk-format qcow2 --copy-from {{ IMGLOC }} {{ OSIMG }}

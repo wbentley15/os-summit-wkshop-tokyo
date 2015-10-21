@@ -1,0 +1,22 @@
+---
+
+- name: Install apt-get updates
+  command: apt-get update
+  
+- name: Upgrade via apt-get
+  command: apt-get -q -y upgrade
+  
+- name: Install additional packages
+  apt: name={{item}} state=present
+  with_items:
+   - bridge-utils
+   - lsof
+   - lvm2
+   - openssh-server
+   - sudo
+   - tcpdump
+   - vlan
+   - vim
+   
+- name: Copy public key to host
+  copy: src=id_rsa.pub dest=/root/.ssh mode=0644

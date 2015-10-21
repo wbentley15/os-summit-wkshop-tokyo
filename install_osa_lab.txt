@@ -1,0 +1,49 @@
+# Clone lab repo
+git clone https://github.com/wbentley15/os-summit-wkshop-tokyo.git
+
+# Take RootSudo role (enter your StudentID password when prompted)
+sudo su
+
+# Change into the working directory
+cd os-summit-wkshop-tokyo/rpcv11-cloud
+
+# Review directory structure
+ls -la
+
+# Edit hosts file located in the rpcv11-cloud directory
+vi hosts
+
+# Update the [allinone] value with your OpenStack server IP address
+...
+[allinone]
+<OpenStack Server IP>
+
+# Execute playbook to prep OpenStack server
+ansible-playbook -i hosts all.yml
+
+*************************************************************************
+Please pause here as we just rebooted the OpenStack server and it needs
+to come back online.  OpenStack Trivia time!!!
+Wait approximately 5 minutes before proceeding.
+*************************************************************************
+
+# Execute playbook to setup OSA deployment on OpenStack server
+ansible-playbook -i hosts prep_deploy.yml
+
+# SSH to OpenStack server
+ssh <OpenStack Server IP> -l root
+
+# Change into OSA playbooks directory
+cd /opt/openstack-ansible
+
+# Execute the following OSA playbooks (go grab some coffee, just kidding)
+cd playbooks
+openstack-ansible setup-everything.yml
+
+# Open browser and connect to the OpenStack server IP (if nothing failed but, please smile even if it did)
+https://<OpenStack Server IP>
+
+*************************************************************************
+Now open up the next lab sheet found at:
+https://github.com/wbentley15/os-summit-wkshop-tokyo/operate_osa_lab.txt
+*************************************************************************

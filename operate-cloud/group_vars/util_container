@@ -1,0 +1,24 @@
+# Here are variables related globally to the util_container host group
+
+OS_USERNAME: admin
+OS_PASSWORD: passwd
+OS_TENANT_NAME: admin
+OS_AUTH_URL_V3: http://172.29.238.2:35357/v3
+OS_AUTH_URL_V2: http://172.29.238.2:5000/v2.0
+OS_SERVICE_TOKEN: passwd
+
+AUTH_S: --os-username {{ OS_USERNAME }} --os-password {{ OS_PASSWORD }} --os-project-name {{ OS_TENANT_NAME }}
+
+MK_USERNAME: mrkt-dev01
+MK_PASSWORD: TysEesk2
+MK_TENANT_NAME: MRKT-Proj01
+
+KEY_NAME: controller-key
+OSIMG: cirros-0.3.3
+IMGLOC: http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
+
+FLAVOR: m1.tiny
+INSTCNT: 3
+INSTNAME: mrkt-proj01
+
+MK_AUTH_S: --os-username {{ MK_USERNAME }} --os-password {{ MK_PASSWORD }} --os-project-name {{ MK_TENANT_NAME }}

@@ -1,0 +1,10 @@
+---
+
+- name: Copy interfaces template file
+  template: src=interfaces.txt dest=/usr/share
+  
+- name: Insert network config into target interface
+  shell: chdir=/usr/share cat /usr/share/interfaces.txt >> /etc/network/interfaces
+  
+- name: Restart target host
+  command: shutdown -r now

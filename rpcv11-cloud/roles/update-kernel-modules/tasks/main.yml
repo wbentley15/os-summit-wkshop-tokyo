@@ -1,0 +1,4 @@
+---
+
+- name: Install additional packages
+  shell: apt-get -q -y install linux-image-extra-`uname -r`

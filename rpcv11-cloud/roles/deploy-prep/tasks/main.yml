@@ -1,0 +1,47 @@
+---
+
+- name: Install additional packages
+  apt: name={{item}} state=present
+  with_items:
+   - git
+   - build-essential
+   - python-dev
+   - bridge-utils
+   - vim
+   - fping
+   
+- name: Clone RPC repository
+  command: chdir=/opt git clone -b 11.2.3 https://github.com/openstack/openstack-ansible.git
+
+- name: Download pip repo
+  shell: chdir=/opt/openstack-ansible ./scripts/bootstrap-ansible.sh
+    
+- name: Prep RPC deploy
+  command: mkdir /etc/openstack_deploy
+  
+- name: Move Ansible playbooks
+  command: cp -R /opt/openstack-ansible/etc/openstack_deploy /etc
+  
+- name: Copy RPC Ansible system variable file
+  copy: src=user_secrets.yml dest=/etc/openstack_deploy mode=0644
+  
+- name: Copy RPC Ansible config file
+  copy: src=openstack_user_config.yml dest=/etc/openstack_deploy mode=0644
+
+- name: Copy RPC Ansible variable file
+  copy: src=user_variables.yml dest=/etc/openstack_deploy mode=0644
+
+- name: Add haproxy-install role to setup-everything playbook
+  copy: src=setup-everything.yml dest=/opt/openstack-ansible/playbooks mode=0644
+
+- name: Copy private key to host
+  copy: src=id_rsa dest=/root/.ssh mode=0600
+  
+- name: Copy public key to host
+  copy: src=id_rsa.pub dest=/root/.ssh mode=0644
+
+- name: Copy updated hosts file
+  copy: src=hosts dest=/opt 
+
+- name: Insert additional entries into hosts file
+  shell: chdir=/opt cat /opt/hosts >> /etc/hosts

@@ -1,0 +1,11 @@
+---
+# This playbook deploys base environment for Openstack Kilo. 
+
+- hosts: allinone 
+  user: root
+  remote_user: root
+  sudo: yes
+  roles:
+    - ntp-standalone
+    - hosts-prep
+    - update-kernel-modules

@@ -1,0 +1,71 @@
+
+# VXLAN - Management
+auto vxlan-mgmt
+iface vxlan-mgmt inet manual
+    pre-up ip link add vxlan-mgmt type vxlan id 10 group 239.0.0.10 dev eth2 || true
+    up ip link set \$IFACE up
+    down ip link set \$IFACE down
+    post-down ip link del vxlan-mgmt || true
+
+# VXLAN - VXLAN
+auto vxlan-vxlan
+iface vxlan-vxlan inet manual
+    pre-up ip link add vxlan-vxlan type vxlan id 20 group 239.0.0.20 dev eth2 || true
+    up ip link set \$IFACE up
+    down ip link set \$IFACE down
+    post-down ip link del vxlan-vxlan || true
+
+# VXLAN - VLAN
+auto vxlan-vlan
+iface vxlan-vlan inet manual
+    pre-up ip link add vxlan-vlan type vxlan id 21 group 239.0.0.21 dev eth2 || true
+    up ip link set \$IFACE up
+    down ip link set \$IFACE down
+    post-down ip link del vxlan-vlan || true
+
+# VXLAN - Storage
+auto vxlan-storage
+iface vxlan-storage inet manual
+    pre-up ip link add vxlan-storage type vxlan id 30 group 239.0.0.30 dev eth2 || true
+    up ip link set \$IFACE up
+    down ip link set \$IFACE down
+    post-down ip link del vxlan-storage || true
+
+# Bridge - Management
+auto br-mgmt
+iface br-mgmt inet static
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports vxlan-mgmt
+    address 172.29.238.{{ NODE_ID }}
+    netmask 255.255.252.0
+    dns-nameservers 8.8.8.8
+
+# Bridge VXLAN
+auto br-vxlan
+iface br-vxlan inet static
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports vxlan-vxlan
+    address 172.29.242.{{ NODE_ID }}
+    netmask 255.255.252.0
+
+# Bridge VLAN
+auto br-vlan
+iface br-vlan inet manual
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports vxlan-vlan
+
+# Bridge Storage
+auto br-storage
+iface br-storage inet static
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports vxlan-storage
+    address 172.29.246.{{ NODE_ID }}
+    netmask 255.255.252.0

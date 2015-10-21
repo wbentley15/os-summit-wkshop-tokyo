@@ -1,0 +1,6 @@
+---
+
+- name: Launch instances in tenant
+  command: nova {{ MK_AUTH_S }} --os-auth-url {{ OS_AUTH_URL_V2 }}
+           boot --flavor {{ FLAVOR }} --image {{ OSIMG }} --security-group default --key-name {{ KEY_NAME }} 
+           --min-count {{ INSTCNT }} {{ INSTNAME }}

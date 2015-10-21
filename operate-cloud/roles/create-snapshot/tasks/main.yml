@@ -1,0 +1,16 @@
+---
+
+- name: Retrieve tenantID
+  shell: openstack {{ AUTH_S }} --os-auth-url {{ OS_AUTH_URL_V3 }} --os-identity-api-version 3
+         project list | awk '/ {{ tenantname }} / { print $2 }'
+  register: tenantid
+
+- name: Retrieve instance id from tenant
+  shell: nova {{ AUTH_S }} --os-auth-url {{ OS_AUTH_URL_V2 }}
+         list --all-tenants --tenant {{ tenantid.stdout }} --minimal | awk 'NR > 3 { print $2 }'
+  register: instid
+
+- name: Create instance snapshot
+  command: nova {{ AUTH_S }} --os-auth-url {{ OS_AUTH_URL_V2 }} 
+           image-create {{ item }} {{ tenantname }}-snap-{{ item }}
+  with_items: instid.stdout_lines

@@ -1,0 +1,87 @@
+******************************************************************
+You should now be at a command prompt that looks like this:
+root@082108-allinone:/opt/openstack-ansible/playbooks# 
+******************************************************************
+
+# Change into the root home directory
+cd ~
+
+# Clone lab repo
+git clone https://github.com/wbentley15/os-summit-wkshop-tokyo.git
+
+# Change into the working directory
+cd os-summit-wkshop-tokyo/operate-cloud
+
+# Review directory structure
+ls -la
+
+# Execute the following command to discover the Utility container IP
+lxc-ls --fancy |grep utility
+
+Working example output will look similar to this:
+
+allinone_utility_container-db74af6c              RUNNING  10.0.3.17, 172.29.238.250 ...
+
+Please note the second IP address starting with 172.29.238.x
+
+# Edit hosts file located in the operate-cloud directory
+vi hosts
+
+# Update the [util_container] value with your Utility container IP address
+...
+[util_container]
+<Utility container IP>
+
+Working example:
+...
+[util_container]
+172.29.238.250
+
+# Execute playbook to create the users environments in your cloud
+ansible-playbook -i hosts base.yml
+
+# Make note of the password for the mrkt-dev01 user, a working example of the output will
+# look similar to this:
+
+ "msg": "User mrkt-dev01 was added to MRKT-Proj01 tenant, with the assigned password of VeegAwf1"
+
+# Edit the global variables file with password from above
+vi group_vars/util_container
+
+# Upated the MK_PASSWORD variable with the password
+...
+MK_PASSWORD: <enter password here>
+
+Working example:
+...
+MK_PASSWORD: VeegAwf1
+
+# This playbook will prep your OpenStack cloud to launch instances
+ansible-playbook -i hosts prep-cloud.yml
+
+# Next execute playbook to adjust the project quotas
+ansible-playbook -i hosts quota-update.yml
+
+# Create some instances to simulate activity
+ansible-playbook -i hosts launch.yml
+
+# Those developers were booted and now it is time to clean up (copy the entire block at
+one time and paste into the command prompt)
+ansible-playbook -i hosts destroy-env.yml --extra-vars "tenantname=MRKT-Proj01 userid=mrkt-dev01"
+ansible-playbook -i hosts destroy-env.yml --extra-vars "tenantname=MRKT-Proj02 userid=mrkt-dev02"
+ansible-playbook -i hosts destroy-env.yml --extra-vars "tenantname=MRKT-Proj03 userid=mrkt-dev03"
+ansible-playbook -i hosts destroy-env.yml --extra-vars "tenantname=MRKT-Proj04 userid=mrkt-dev04"
+ansible-playbook -i hosts destroy-env.yml --extra-vars "tenantname=MRKT-Proj05 userid=mrkt-dev05"
+ansible-playbook -i hosts destroy-env.yml --extra-vars "tenantname=MRKT-Proj06 userid=mrkt-dev06"
+ansible-playbook -i hosts destroy-env.yml --extra-vars "tenantname=MRKT-Proj07 userid=mrkt-dev07"
+ansible-playbook -i hosts destroy-env.yml --extra-vars "tenantname=MRKT-Proj08 userid=mrkt-dev08"
+ansible-playbook -i hosts destroy-env.yml --extra-vars "tenantname=MRKT-Proj09 userid=mrkt-dev09"
+ansible-playbook -i hosts destroy-env.yml --extra-vars "tenantname=MRKT-Proj10 userid=mrkt-dev10"
+
+
+# Exit out of the OpenStack server
+exit
+
+# Close connection to the lab server
+exit
+exit

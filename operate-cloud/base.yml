@@ -1,0 +1,9 @@
+---
+# This playbook used to demo OpenStack Juno user, role and tenant features. 
+
+- hosts: util_container
+  user: root
+  remote_user: root
+  sudo: yes
+  roles:
+    - create-users-env

@@ -1,0 +1,116 @@
+---
+cidr_networks:
+  container: 172.29.238.0/24
+  tunnel: 172.29.242.0/24
+  storage: 172.29.246.0/24
+
+used_ips:
+  - 172.29.238.1,172.29.238.20
+  - 172.29.242.1,172.29.242.20
+  - 172.29.246.1,172.29.246.20
+
+global_overrides:
+  internal_lb_vip_address: 172.29.238.2
+  external_lb_vip_address: 172.29.238.2
+  tunnel_bridge: "br-vxlan"
+  management_bridge: "br-mgmt"
+  provider_networks:
+    - network:
+        group_binds:
+          - all_containers
+          - hosts
+        type: "raw"
+        container_bridge: "br-mgmt"
+        container_interface: "eth1"
+        container_type: "veth"
+        ip_from_q: "container"
+        is_container_address: true
+        is_ssh_address: true
+    - network:
+        group_binds:
+          - glance_api
+          - cinder_api
+          - cinder_volume
+          - nova_compute
+          # - swift_proxy ## If you are using the storage network for swift_proxy add it to the group_binds
+        type: "raw"
+        container_bridge: "br-storage"
+        container_type: "veth"
+        container_interface: "eth2"
+        ip_from_q: "storage"
+    - network:
+        group_binds:
+          - neutron_linuxbridge_agent
+        container_bridge: "br-vxlan"
+        container_type: "veth"
+        container_interface: "eth10"
+        ip_from_q: "tunnel"
+        type: "vxlan"
+        range: "1:1000"
+        net_name: "vxlan"
+    - network:
+        group_binds:
+          - neutron_linuxbridge_agent
+        container_bridge: "br-vlan"
+        container_type: "veth"
+        container_interface: "eth11"
+        type: "vlan"
+        range: "1:1"
+        net_name: "vlan"
+
+# Shared infrastructure parts
+shared-infra_hosts:
+  allinone:
+    ip: 172.29.238.2
+
+# OpenStack Compute infrastructure parts
+os-infra_hosts:
+  allinone:
+    ip: 172.29.238.2
+
+# OpenStack Compute infrastructure parts
+storage-infra_hosts:
+  allinone:
+    ip: 172.29.238.2
+
+repo-infra_hosts:
+  allinone:
+    ip: 172.29.238.2
+
+# Keystone Identity infrastructure parts
+identity_hosts:
+  allinone:
+    ip: 172.29.238.2
+
+# User defined Compute Hosts, this should be a required group
+compute_hosts:
+  allinone:
+    ip: 172.29.238.2
+
+# User defined Storage Hosts, this should be a required group
+#storage_hosts:
+#  cinder1:
+#    ip: 10.0.12.4
+#    container_vars:
+#      cinder_storage_availability_zone: cinderAZ_1
+#      cinder_default_availability_zone: cinderAZ_1
+#      cinder_backends:
+#        limit_container_types: cinder_volume
+#        lvm:
+#          volume_group: cinder-volumes
+#          volume_driver: cinder.volume.drivers.lvm.LVMVolumeDriver
+#          volume_backend_name: LVM_iSCSI
+
+# User defined Logging Hosts, this should be a required group
+log_hosts:
+  allinone:
+    ip: 172.29.238.2
+
+# User defined Networking Hosts, this should be a required group
+network_hosts:
+  allinone:
+    ip: 172.29.238.2
+
+haproxy_hosts:
+  allinone:
+    ip: 172.29.238.2
